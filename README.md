@@ -15,7 +15,9 @@ Runs fully locally: embeddings and the reranker are small ONNX models, and the L
 - **Answers with citations** from Anthropic or OpenAI, or an extractive answer when no API key is set.
 - **Collections** to keep separate document sets in one database; re-uploading a file replaces it.
 - **Evaluation harness** with a fixed question set, reporting Hit@1, Hit@5 and MRR for each pipeline variant.
-- **Tests and CI**: unit tests, an end-to-end API test against real PostgreSQL, lint, and the evaluation on every push.
+- **Reliable LLM calls**: network errors, rate limits (429) and server errors are retried with exponential backoff; client errors fail immediately.
+- **Fails fast on misconfiguration**: the app refuses to start if `EMBEDDING_DIM` doesn't match the embedding model, before any table is created.
+- **Tests and CI**: 42 tests (unit, mocked LLM providers, and end-to-end against real PostgreSQL), 100% line coverage of `app/` with a 95% minimum enforced in CI, lint and format checks, and the evaluation on every push.
 
 ## Architecture
 
@@ -114,13 +116,24 @@ To generate written answers with an LLM, set `LLM_PROVIDER=anthropic` (or `opena
 
 ## Development
 
-Run the tests and lint inside the container (the end-to-end test uses the Compose database):
+Run the tests and lint inside the container (the end-to-end tests use the Compose database):
 
 ```bash
 docker compose up -d db
-docker compose run --rm api sh -c "ruff check . && pytest -q"
+docker compose run --rm api sh -c "ruff check . && ruff format --check . && pytest -q --cov=app"
 docker compose run --rm api python -m eval.run_eval
 ```
+
+What the tests cover:
+
+| Area | Tests |
+|---|---|
+| Chunking | heading paths, paragraph packing, size limits, edge cases |
+| Retrieval | rank fusion, all three search modes against a real database, empty collections |
+| Ingestion | PDF and text extraction, re-upload replaces a document, both chunkers |
+| API | upload limits (type, size, empty files), input validation, health, cited answers |
+| LLM | request format for Anthropic and OpenAI, retries, backoff, giving up, no retry on client errors (all mocked, no API key needed) |
+| Startup | embedding dimension check |
 
 Or locally with Python 3.11+: `pip install -e ".[dev]"` and set `DATABASE_URL`.
 
@@ -132,6 +145,17 @@ Or locally with Python 3.11+: `pip install -e ".[dev]"` and set `DATABASE_URL`.
 - **Filtered vector search.** HNSW returns a fixed number of candidates before the `WHERE collection = ...` filter runs, which can return too few or misordered rows when several collections share the table. Connections enable pgvector's iterative index scans (`hnsw.iterative_scan = strict_order`) to avoid that.
 - **Deterministic ranking.** Ties are broken by chunk id in both searches and in fusion, so evaluation results are reproducible run to run.
 - **Local models by default.** `bge-small-en-v1.5` (embeddings) and `ms-marco-MiniLM-L-6-v2` (reranker) run on CPU through ONNX, so the project works without any API key.
+- **No custom embedding batching.** fastembed already embeds in batches of 256, and the vectors for a 10 MB document take roughly 15 MB of memory, so an extra batching layer would add code without a benefit.
+
+## Not included yet
+
+This is a starter, so some production concerns are deliberately left out:
+
+- **Authentication and authorization.** The API is open; put it behind an API gateway or add API keys / OAuth before exposing it.
+- **Rate limiting** per client.
+- **Background ingestion.** Uploads are embedded inside the request; large or frequent uploads should move to a job queue.
+- **Model serving at scale.** Embedding and reranking run on CPU in the API process; heavy traffic needs a separate inference service or GPU.
+- **A larger evaluation set**, including exact-term questions (IDs, codes) where hybrid search is expected to help.
 
 ## Project structure
 
