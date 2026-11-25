@@ -28,5 +28,15 @@ def embed_query(text: str) -> np.ndarray:
     return next(iter(_embedder().query_embed(text)))
 
 
+def check_embedding_dim(expected: int) -> None:
+    """Fail fast if EMBEDDING_DIM doesn't match the model, instead of on the first insert."""
+    actual = len(embed_query("dimension check"))
+    if actual != expected:
+        raise RuntimeError(
+            f"EMBEDDING_DIM={expected} but {settings.embedding_model} produces "
+            f"{actual}-dimensional vectors. Set EMBEDDING_DIM={actual}."
+        )
+
+
 def rerank_scores(query: str, texts: list[str]) -> list[float]:
     return [float(s) for s in _reranker().rerank(query, texts)]

@@ -3,9 +3,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
+from .config import settings
 from .db import init_schema, make_pool
 from .ingest import ingest, read_text
 from .llm import answer
+from .models import check_embedding_dim
 from .retrieval import Mode, search
 
 ALLOWED = (".pdf", ".md", ".markdown", ".txt")
@@ -14,6 +16,7 @@ MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    check_embedding_dim(settings.embedding_dim)  # before the schema, so no table gets a wrong size
     init_schema()
     app.state.pool = make_pool()
     yield
