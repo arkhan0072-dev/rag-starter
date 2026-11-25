@@ -44,6 +44,11 @@ def test_heading_level_resets_deeper_levels():
     assert [c.heading for c in chunks] == ["A > B > C", "A > D"]
 
 
+def test_ignores_leading_and_trailing_blank_lines():
+    chunks = by_structure("\n\n\n# A\n\ntext\n\n\n")
+    assert [(c.heading, c.content) for c in chunks] == [("A", "text")]
+
+
 def test_fixed_size_overlaps():
     chunks = fixed_size("abcdefghij" * 10, size=40, overlap=10)
     assert all(len(c.content) <= 40 for c in chunks)
