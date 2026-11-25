@@ -37,10 +37,18 @@ def init_schema() -> None:
         conn.execute(SCHEMA)
 
 
+def configure(conn: psycopg.Connection) -> None:
+    register_vector(conn)
+    # The HNSW index returns a fixed number of candidates before the WHERE filter
+    # (collection) runs, so filtered searches could come back short or out of order.
+    # Iterative scans (pgvector >= 0.8) keep scanning until enough rows pass the filter.
+    conn.execute("SET hnsw.iterative_scan = strict_order")
+
+
 def make_pool() -> ConnectionPool:
     return ConnectionPool(
         settings.database_url,
         kwargs={"autocommit": True},
-        configure=register_vector,
+        configure=configure,
         open=True,
     )

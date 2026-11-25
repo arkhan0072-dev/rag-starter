@@ -1,0 +1,30 @@
+{"question": "How many holiday days do I get each year?", "source": "employee-handbook.md", "answer": "25 working days"}
+{"question": "Can I keep unused vacation days for next year?", "source": "employee-handbook.md", "answer": "Up to five unused days"}
+{"question": "When do carried over vacation days run out?", "source": "employee-handbook.md", "answer": "31 March"}
+{"question": "When do I need a doctor's note if I'm ill?", "source": "employee-handbook.md", "answer": "longer than two consecutive days"}
+{"question": "How long is maternity or paternity leave for the main carer?", "source": "employee-handbook.md", "answer": "16 weeks"}
+{"question": "What's the daily food allowance on a business trip?", "source": "employee-handbook.md", "answer": "45 USD per day"}
+{"question": "Do I need approval before buying something expensive for work?", "source": "employee-handbook.md", "answer": "above 500 USD"}
+{"question": "How often do we get a new laptop?", "source": "employee-handbook.md", "answer": "every three years"}
+{"question": "When do pay rises take effect?", "source": "employee-handbook.md", "answer": "1 February"}
+{"question": "How many days a week can I work remotely?", "source": "employee-handbook.md", "answer": "two days per week"}
+{"question": "If I send a parcel today in the afternoon, when will express arrive?", "source": "shipping-policy.md", "answer": "after 14:00"}
+{"question": "What is the heaviest box I can send without using a pallet?", "source": "shipping-policy.md", "answer": "30 kg"}
+{"question": "Can I ship perfume by plane?", "source": "shipping-policy.md", "answer": "never by air"}
+{"question": "Are spare batteries allowed in a parcel?", "source": "shipping-policy.md", "answer": "Loose lithium batteries are refused"}
+{"question": "How much do text message tracking alerts cost?", "source": "shipping-policy.md", "answer": "0.10 USD per message"}
+{"question": "What happens if nobody is home for the delivery twice?", "source": "shipping-policy.md", "answer": "held at the nearest depot for seven days"}
+{"question": "How long does the cheapest pallet service take?", "source": "shipping-policy.md", "answer": "seven to ten working days"}
+{"question": "What is the maximum height of a pallet?", "source": "shipping-policy.md", "answer": "1.8 metres"}
+{"question": "How many days after delivery can a customer send something back?", "source": "returns-and-claims.md", "answer": "60 days"}
+{"question": "Is the return label free on the Starter plan?", "source": "returns-and-claims.md", "answer": "6 USD on the Starter plan"}
+{"question": "By when must broken items be reported?", "source": "returns-and-claims.md", "answer": "within 48 hours"}
+{"question": "When is a parcel considered missing?", "source": "returns-and-claims.md", "answer": "ten working days"}
+{"question": "How much is a parcel insured for by default?", "source": "returns-and-claims.md", "answer": "100 USD per parcel"}
+{"question": "What does extra insurance cost?", "source": "returns-and-claims.md", "answer": "1.5 percent of the declared value"}
+{"question": "How fast are refunds paid after a claim is accepted?", "source": "returns-and-claims.md", "answer": "within 14 days of approval"}
+{"question": "What is the minimum password length?", "source": "it-security.md", "answer": "14 characters"}
+{"question": "Can I use a USB stick on my work laptop?", "source": "it-security.md", "answer": "USB storage devices are blocked"}
+{"question": "How long are database backups kept?", "source": "it-security.md", "answer": "35 days"}
+{"question": "What should I do with a suspicious email?", "source": "it-security.md", "answer": "Report phishing"}
+{"question": "How quickly do I have to report a security breach?", "source": "it-security.md", "answer": "within one hour"}

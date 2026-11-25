@@ -29,7 +29,7 @@ def vector_search(conn: psycopg.Connection, collection: str, query: str, k: int)
         SELECT c.id, d.source, c.heading, c.content, 1 - (c.embedding <=> %(q)s) AS score
         FROM chunks c JOIN documents d ON d.id = c.document_id
         WHERE d.collection = %(col)s
-        ORDER BY c.embedding <=> %(q)s
+        ORDER BY c.embedding <=> %(q)s, c.id
         LIMIT %(k)s
         """,
         {"q": qvec, "col": collection, "k": k},
@@ -48,7 +48,7 @@ def keyword_search(conn: psycopg.Connection, collection: str, query: str, k: int
         SELECT c.id, d.source, c.heading, c.content, ts_rank_cd(c.tsv, q.tsq) AS score
         FROM chunks c JOIN documents d ON d.id = c.document_id, q
         WHERE d.collection = %(col)s AND c.tsv @@ q.tsq
-        ORDER BY score DESC
+        ORDER BY score DESC, c.id
         LIMIT %(k)s
         """,
         {"text": query, "col": collection, "k": k},
@@ -66,7 +66,7 @@ def reciprocal_rank_fusion(*rankings: list[Hit], k: int = 60) -> list[Hit]:
             scores[hit.chunk_id] = scores.get(hit.chunk_id, 0.0) + 1.0 / (k + rank)
             hits.setdefault(hit.chunk_id, hit)
     fused = [replace(hits[cid], score=s) for cid, s in scores.items()]
-    return sorted(fused, key=lambda h: h.score, reverse=True)
+    return sorted(fused, key=lambda h: (-h.score, h.chunk_id))
 
 
 def search(
